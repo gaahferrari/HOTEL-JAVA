@@ -1,26 +1,26 @@
 import entity.User;
+import entity.Wallet;
 
 public class Reservation {
-
     private String userName;
     private String startDay;
     private String endDay;
     private Hotel hotel;
     static Room room;
     private Long numDays;
-    private String cardType;
+    private Wallet wallet;
     private int installments;
 
 
 
-    public Reservation(String userName, String startDay, String endDay, Hotel hotel, Room room, long numDays, String cardType, int installments) {
+    public Reservation(String userName, String startDay, String endDay, Hotel hotel, Room room, long numDays, Wallet wallet, int installments) {
         this.userName = userName;
         this.startDay = startDay;
         this.endDay = endDay;
         this.hotel = hotel;
         this.room = room;
         this.numDays = numDays;
-        this.cardType = cardType;
+        this.wallet = wallet;
         this.installments = installments;
     }
 
@@ -32,9 +32,9 @@ public class Reservation {
 
     public String getReservation() {
         String paymentInfo;
-        if (cardType.equals("debit")) {
+        if (wallet.equals("debit")) {
             paymentInfo = "Pagamento à vista com cartão de débito";
-        } else if (cardType.equals("credit")) {
+        } else if (wallet.equals("credit")) {
             paymentInfo = "Pagamento parcelado em " + installments + "x com cartão de crédito";
         } else {
             paymentInfo = "Tipo de cartão inválido";

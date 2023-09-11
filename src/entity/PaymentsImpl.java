@@ -14,7 +14,6 @@ public class PaymentsImpl implements Payment  {
     public void payCredit(double amount, int installments, Wallet wallet) {
         if (wallet.getCard().equals("credit")) {
             if (installments > 1 && installments <= 12) {
-                double installmentAmount = amount / installments;
                 for (int i = 1; i <= installments; i++) {
                 }
             } else {

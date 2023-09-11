@@ -1,7 +1,4 @@
-import entity.Address;
-import entity.Client;
-import entity.User;
-import entity.Wallet;
+import entity.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -11,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        PaymentsImpl payments = new PaymentsImpl();
 
         Hotel.hotel1.setRooms(List.of(Hotel.room1, Hotel.room2, Hotel.room3));
         Hotel.hotel2.setRooms(List.of(Hotel.room12, Hotel.room22, Hotel.room32));
@@ -30,7 +28,7 @@ public class Main {
                     if (User.users.size() > 0) {
                         System.out.println("Você já está logado, se deseja cadastrar outro usuário selecione a opção SAIR");
                     } else {
-                        System.out.println("Cadastre-se agora" );
+                        System.out.println("Cadastre-se agora");
                         System.out.println("Digite seu e-mail: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
                         String emailAddress = scanner.next();
 
@@ -134,11 +132,12 @@ public class Main {
                                                 System.out.println("1 - Débito");
                                                 System.out.println("2 - Crédito");
                                                 int paymentType = scanner.nextInt();
-
-                                                String cardType;
+                                                Double amount = selectedRoom.getRate();
+                                                Wallet wallet;
                                                 int installments = 1;
                                                 if (paymentType == 1) {
-                                                    cardType = "debit";
+                                                     wallet = new Wallet("debit");
+                                                    payments.payDebit(amount, wallet);
                                                     System.out.println("Processando pagamento ...");
                                                     try {
                                                         Thread.sleep(2000);
@@ -147,9 +146,10 @@ public class Main {
                                                     }
                                                     System.out.println("PAGAMENTO APROVADO!");
                                                 } else if (paymentType == 2) {
+                                                     wallet = new Wallet("credit");
                                                     System.out.println("Quantas parcelas deseja dividir o pagamento? (Até 12X sem juros)");
                                                     installments = scanner.nextInt();
-                                                    cardType = "credit";
+                                                    payments.payCredit(amount, installments, wallet);
                                                     System.out.println("Processando pagamento ...");
                                                     try {
                                                         Thread.sleep(2000);
@@ -165,7 +165,7 @@ public class Main {
                                                 long numDays = ChronoUnit.DAYS.between(startDayDate, endDayDate);
 
 
-                                                Reservation reservation = new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel1, selectedRoom, numDays, cardType,installments);
+                                                Reservation reservation = new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel1, selectedRoom, numDays, wallet, installments);
                                                 Hotel.reservations.add(reservation);
 
                                                 controler = false;
@@ -217,15 +217,18 @@ public class Main {
                                                 System.out.println("2 - Crédito");
                                                 int paymentType = scanner.nextInt();
 
-                                                String cardType;
+                                                Double amount = selectedRoom.getRate();
+                                                Wallet wallet;
                                                 int installments = 1;
                                                 if (paymentType == 1) {
-                                                    cardType = "debit";
+                                                    wallet = new Wallet("debit");
+                                                    payments.payDebit(amount, wallet);
                                                     System.out.println("PAGAMENTO APROVADO!");
                                                 } else if (paymentType == 2) {
-                                                    System.out.println("Quantas parcelas deseja dividir o pagamento?");
+                                                    wallet = new Wallet("credit");
+                                                    System.out.println("Quantas parcelas deseja dividir o pagamento? (Até 12X sem juros)");
                                                     installments = scanner.nextInt();
-                                                    cardType = "credit";
+                                                    payments.payCredit(amount, installments, wallet);
                                                     System.out.println("PAGAMENTO APROVADO!");
                                                 } else {
                                                     System.out.println("Opção inválida");
@@ -234,7 +237,7 @@ public class Main {
 
                                                 long numDays = ChronoUnit.DAYS.between(startDayDate, endDayDate);
 
-                                                Hotel.reservations.add(new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel2, selectedRoom, numDays, cardType,installments));
+                                                Hotel.reservations.add(new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel2, selectedRoom, numDays, wallet, installments));
                                                 controler = false;
                                                 System.out.println("Reserva feita com sucesso! Você será direcionado ao menu incial.");
                                                 break;
@@ -284,24 +287,26 @@ public class Main {
                                                 System.out.println("2 - Crédito");
                                                 int paymentType = scanner.nextInt();
 
-                                                String cardType;
+                                                Double amount = selectedRoom.getRate();
+                                                Wallet wallet;
                                                 int installments = 1;
                                                 if (paymentType == 1) {
-                                                    cardType = "debit";
+                                                    wallet = new Wallet("debit");
+                                                    payments.payDebit(amount, wallet);
                                                     System.out.println("PAGAMENTO APROVADO!");
                                                 } else if (paymentType == 2) {
-                                                    System.out.println("Quantas parcelas deseja dividir o pagamento?");
+                                                    wallet = new Wallet("credit");
+                                                    System.out.println("Quantas parcelas deseja dividir o pagamento? (Até 12X sem juros)");
                                                     installments = scanner.nextInt();
-                                                    cardType = "credit";
+                                                    payments.payCredit(amount, installments, wallet);
                                                     System.out.println("PAGAMENTO APROVADO!");
                                                 } else {
                                                     System.out.println("Opção inválida");
                                                     break;
                                                 }
-
                                                 long numDays = ChronoUnit.DAYS.between(startDayDate, endDayDate);
 
-                                                Hotel.reservations.add(new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel3, selectedRoom, numDays, cardType, installments));
+                                                Hotel.reservations.add(new Reservation(User.getUserFullName(), startDay, endDay, Hotel.hotel3, selectedRoom, numDays, wallet, installments));
                                                 controler = false;
                                                 System.out.println("Reserva feita com sucesso! Você será direcionado ao menu incial.");
                                                 break;
