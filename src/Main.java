@@ -29,6 +29,7 @@ public class Main {
                         System.out.println("Você já está logado, se deseja cadastrar outro usuário selecione a opção SAIR");
                     } else {
                         System.out.println("Cadastre-se agora");
+
                         System.out.println("Digite seu e-mail: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
                         String emailAddress = scanner.next();
 
@@ -37,12 +38,12 @@ public class Main {
 
                         System.out.println("Digite sua senha: (Usar o símbolo '_' se precisar dar espaço entre caracteres) ");
                         String passwordUser = scanner.next();
-
+                        scanner.nextLine();
                         System.out.println("Digite seu nome: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
-                        String name = scanner.next();
+                        String name = scanner.nextLine();;
 
                         System.out.println("Digite seu sobrenome: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
-                        String lastName = scanner.next();
+                        String lastName = scanner.nextLine();;
 
                         System.out.println("Digite sua data de nascimento: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
                         String age = scanner.next();
@@ -50,8 +51,10 @@ public class Main {
                         System.out.println("Digite seu cartão: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
                         String card = scanner.next();
 
+                        scanner.nextLine();
+
                         System.out.println("Digite o nome da sua rua: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
-                        String street = scanner.next();
+                        String street = scanner.nextLine();
 
                         System.out.println("Digite o número da sua casa: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
                         String number = scanner.next();
