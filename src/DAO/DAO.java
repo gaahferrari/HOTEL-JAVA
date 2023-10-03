@@ -1,4 +1,5 @@
 package DAO;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Random;
 import entity.*;
 
 import static DAO.DatabaseConnection.getConnection;
+
 public class DAO {
 
     public static void newUSer(User user) throws SQLException {
@@ -28,32 +30,33 @@ public class DAO {
             }
         }
     }
+
     public static void newCard(Wallet wallet) throws SQLException {
         try (Connection connection = getConnection()) {
             String sql = "INSERT INTO PAYMENT(id, Card, expiredDate, installments, id_user) VALUES (?, ?, ?,?, ?)";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                Random random = new Random();
-                int idCard = random.nextInt(1000000);
-                statement.setInt(1, idCard);
+
+                statement.setInt(1, wallet.getId());
                 statement.setString(2, wallet.getCard());
                 statement.setString(3, wallet.getExpirationDate());
                 statement.setString(4, null);
                 statement.setInt(5, wallet.getUser_id().getId());
                 statement.executeUpdate();
             }
-        }}
+        }
+    }
+
     public static void newAddress(Address address) throws SQLException {
         try (Connection connection = getConnection()) {
             String sql = "INSERT INTO ADDRESS (id, street, number, neighborhood, zipCode, city, state, country, id_user) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
-                Random random = new Random();
-                int idAddress = random.nextInt(1000000);
-                statement.setInt(1, idAddress);
+
+                statement.setInt(1, address.getId());
                 statement.setString(2, address.getStreet());
-                statement.setString(3, address.getNumber());
+                statement.setInt(3, address.getNumber());
                 statement.setString(4, address.getNeighborhood());
                 statement.setString(5, address.getZipCode());
                 statement.setString(6, address.getCity());
@@ -169,7 +172,7 @@ public class DAO {
     }
 
 
-    public static List<Reservation> getAllReservations() throws SQLException {
+    public static List<Reservation> getAllReservations(User currentUser) throws SQLException {
         List<Reservation> reservations = new ArrayList<>();
 
         try (Connection connection = getConnection()) {
@@ -177,42 +180,45 @@ public class DAO {
                     "FROM RESERVATION " +
                     "LEFT JOIN ROOM ON RESERVATION.id_room = ROOM.id " +
                     "LEFT JOIN HOTEL ON RESERVATION.id_hotel = HOTEL.id " +
-                    "LEFT JOIN USER ON RESERVATION.id_user = USER.id";
+                    "LEFT JOIN USER ON RESERVATION.id_user = USER.id " +
+                    "WHERE USER.id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, currentUser.getId());
 
-            try (PreparedStatement statement = connection.prepareStatement(sql);
-                 ResultSet resultSet = statement.executeQuery()) {
+                try (ResultSet resultSet = statement.executeQuery()) {
 
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("id");
-                    String startDay = resultSet.getString("startDay");
-                    String endDay = resultSet.getString("endDay");
-                    long numDays = resultSet.getLong("numDays");
+                    while (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String startDay = resultSet.getString("startDay");
+                        String endDay = resultSet.getString("endDay");
+                        long numDays = resultSet.getLong("numDays");
 
-                    int roomId = resultSet.getInt("room.id");
-                    String roomName = resultSet.getString("room.name");
-                    Integer roomGuestPerRoom = resultSet.getInt("room.guestPerRoom");
-                    Double roomRate = resultSet.getDouble("room.rate");
-                    boolean roomAvailable = resultSet.getBoolean("room.available");
-                    Room room = new Room(roomId, roomName, roomGuestPerRoom, roomRate, roomAvailable, null);
+                        int roomId = resultSet.getInt("room.id");
+                        String roomName = resultSet.getString("room.name");
+                        Integer roomGuestPerRoom = resultSet.getInt("room.guestPerRoom");
+                        Double roomRate = resultSet.getDouble("room.rate");
+                        boolean roomAvailable = resultSet.getBoolean("room.available");
+                        Room room = new Room(roomId, roomName, roomGuestPerRoom, roomRate, roomAvailable, null);
 
-                    int hotelId = resultSet.getInt("hotel.id");
-                    String hotelName = resultSet.getString("hotel.name");
-                    Integer hotelRating = resultSet.getInt("hotel.rating");
-                    Hotel hotel = new Hotel(hotelId, hotelName, hotelRating);
+                        int hotelId = resultSet.getInt("hotel.id");
+                        String hotelName = resultSet.getString("hotel.name");
+                        Integer hotelRating = resultSet.getInt("hotel.rating");
+                        Hotel hotel = new Hotel(hotelId, hotelName, hotelRating);
 
-                    int userId = resultSet.getInt("user.id");
-                    String userName = resultSet.getString("user.name");
-                    String userLastName = resultSet.getString("user.lastName");
-                    String userAge = resultSet.getString("user.age");
-                    String userEmailAddress = resultSet.getString("user.email");
-                    String loginUserName = resultSet.getString("user.userName");
-                    String passwordUser = resultSet.getString("user.password");
-                    Boolean isAdmin = resultSet.getBoolean("user.ADMIN");
-                    User user = new User(userId, userName, userLastName, userAge, userEmailAddress, loginUserName, passwordUser, isAdmin);
+                        int userId = resultSet.getInt("user.id");
+                        String userName = resultSet.getString("user.name");
+                        String userLastName = resultSet.getString("user.lastName");
+                        String userAge = resultSet.getString("user.age");
+                        String userEmailAddress = resultSet.getString("user.email");
+                        String loginUserName = resultSet.getString("user.userName");
+                        String passwordUser = resultSet.getString("user.password");
+                        Boolean isAdmin = resultSet.getBoolean("user.ADMIN");
+                        User user = new User(userId, userName, userLastName, userAge, userEmailAddress, loginUserName, passwordUser, isAdmin);
 
-                    double total = resultSet.getDouble("total");
+                        double total = resultSet.getDouble("total");
 
-                    reservations.add(new Reservation(id, startDay, endDay, numDays, hotel, room, user, total));
+                        reservations.add(new Reservation(id, startDay, endDay, numDays, hotel, room, user, total));
+                    }
                 }
             }
         }
@@ -238,7 +244,7 @@ public class DAO {
                         String loginUserName = resultSet.getString("username");
                         String passwordUser = resultSet.getString("password");
                         Boolean isAdmin = resultSet.getBoolean("ADMIN");
-                        user = new User(id, name, lastName, age, emailAddress, loginUserName, passwordUser,isAdmin);
+                        user = new User(id, name, lastName, age, emailAddress, loginUserName, passwordUser, isAdmin);
                     }
                 }
             }
@@ -248,8 +254,99 @@ public class DAO {
     }
 
 
+    public static void updatePassword(User currentUser, String newPassword) throws SQLException {
+        try (Connection connection = getConnection()) {
+            String sql = "UPDATE USER SET password = ? WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, newPassword);
+                statement.setInt(2, currentUser.getId());
+                statement.executeUpdate();
+            }
+        }
+    }
 
+    public static User newPassword(String username) throws SQLException {
+        User user = null;
+        try (Connection connection = getConnection()) {
+            String sql = "SELECT * FROM USER WHERE username = ? ";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, username);
 
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String name = resultSet.getString("name");
+                        String lastName = resultSet.getString("lastName");
+                        String age = resultSet.getString("age");
+                        String emailAddress = resultSet.getString("email");
+                        String loginUserName = resultSet.getString("username");
+                        String passwordUser = resultSet.getString("password");
+                        Boolean isAdmin = resultSet.getBoolean("ADMIN");
+                        user = new User(id, name, lastName, age, emailAddress, loginUserName, passwordUser, isAdmin);
+                    }
+                }
+            }
+        }
+
+        return user;
+    }
+
+    public static Wallet getPayment(User currentUser) throws SQLException {
+        Wallet wallet = null;
+        try (Connection connection = getConnection()) {
+            String sql = "SELECT * FROM PAYMENT WHERE id_user = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, currentUser.getId());
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String Card = resultSet.getString("Card");
+                        String expiredDate = resultSet.getString("expiredDate");
+                        Integer installments = resultSet.getInt("installments");
+
+                        wallet = new Wallet(id, Card, expiredDate, installments, currentUser);
+                    }
+                }
+            }
+        }
+
+        return wallet;
+    }
+
+    public static Address getAddress(User currentUser) throws SQLException {
+        Address address = null;
+        try (Connection connection = getConnection()) {
+            String sql = "SELECT * FROM ADDRESS WHERE id_user = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setInt(1, currentUser.getId());
+
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("id");
+                        String street = resultSet.getString("street");
+                        Integer number = resultSet.getInt("number");
+                        String neighborhood = resultSet.getString("neighborhood");
+                        String zipCode = resultSet.getString("zipCode");
+                        String city = resultSet.getString("city");
+                        String state = resultSet.getString("state");
+                        String country = resultSet.getString("country");
+
+                        address = new Address(id, street, number, neighborhood, zipCode, city, state, country, currentUser);
+                    }
+                }
+            }
+        }
+        return address;
+    }
+    public static void cancelReservation(int reservationId) throws SQLException {
+        try (Connection connection = getConnection()) {
+        String sql = "DELETE FROM RESERVATION WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, reservationId);
+            statement.executeUpdate();
+    }}}
 
 }
+
 

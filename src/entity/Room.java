@@ -49,7 +49,7 @@ public class Room {
         System.out.println("Selecione o hotel qual você deseja adicionar o quarto:");
         DAO.getAllHotels();
         for (int i = 0; i < hotel.size(); i++) {
-            System.out.printf("%d. %s%n", i + 1, hotel.get(i).getName());
+            System.out.println((i + 1) + ". " + hotel.get(i).getName());
         }
 
         int hotelIndex = scanner.nextInt() - 1;

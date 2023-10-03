@@ -3,12 +3,16 @@ package entity;
 import DAO.DAO;
 
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Wallet {
-    private User user_id;
+    Integer id;
     String card;
     String expirationDate;
+    Integer installments;
+    User user_id;
+
 
 
     public void saveDB() {
@@ -23,13 +27,16 @@ public class Wallet {
 
     public static Wallet registerNewCard(User user) {
         Scanner scanner = new Scanner(System.in);
+        Integer installments = null;
+        Random random = new Random();
+        int id = random.nextInt(1000000);
 
         System.out.println("Digite número do seu cartão: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
         String card = scanner.next();
 
         System.out.println("Digite a data que expira seu cartão: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
         String expirationDate = scanner.next();
-        return new Wallet(card, expirationDate, user);
+        return new Wallet(id, card, expirationDate, installments, user);
     }
 
     public String getExpirationDate() {
@@ -56,9 +63,27 @@ public class Wallet {
         this.user_id = user_id;
     }
 
-    public Wallet(String card, String expirationDate, User user_id) {
+    public Integer getInstallments() {
+        return installments;
+    }
+
+    public void setInstallments(Integer installments) {
+        this.installments = installments;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Wallet(Integer id, String card, String expirationDate, Integer installments, User user_id) {
+        this.id = id;
         this.card = card;
         this.expirationDate = expirationDate;
+        this.installments = installments;
         this.user_id = user_id;
     }
 }

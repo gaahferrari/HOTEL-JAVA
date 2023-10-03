@@ -48,8 +48,7 @@ public class Reservation {
         System.out.print("Selecione o quarto desejado: ");
         int roomIndex = scanner.nextInt() - 1;
         Room selectedRoom = rooms.get(roomIndex);
-
-        // Solicita as datas de check-in e check-out
+        
         System.out.print("Digite a data de check-in (dd/mm/aaaa): ");
         String checkInDateStr = scanner.next();
         LocalDate checkInDate = LocalDate.parse(checkInDateStr, DateTimeFormatter.ofPattern("dd/MM/yyyy"));

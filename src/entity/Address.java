@@ -3,12 +3,14 @@ package entity;
 import DAO.DAO;
 
 import java.sql.SQLException;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Address {
+    private Integer id;
     private User user_id;
     private String street;
-    private String number;
+    private Integer number;
     private String neighborhood;
     private String zipCode;
     private String city;
@@ -16,7 +18,8 @@ public class Address {
     private String country;
 
 
-    public Address(String street, String number, String neighborhood, String zipCode, String city, String state, String country, User user_id) {
+    public Address(Integer id, String street, Integer number, String neighborhood, String zipCode, String city, String state, String country, User user_id) {
+        this.id = id;
         this.street = street;
         this.number = number;
         this.neighborhood = neighborhood;
@@ -39,11 +42,14 @@ public class Address {
 
     public static Address registerNewAddress(User user) {
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+        int id = random.nextInt(1000000);
+
         System.out.println("Digite o nome da sua rua: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
         String street = scanner.nextLine();
 
         System.out.println("Digite o número da sua casa: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
-        String number = scanner.next();
+        Integer number = scanner.nextInt();
 
         System.out.println("Digite o nome do seu bairro: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
         String neighborhood = scanner.next();
@@ -60,7 +66,7 @@ public class Address {
         System.out.println("Digite o nome do seu país: (Usar o símbolo '_' se precisar dar espaço entre caracteres)");
         String country = scanner.next();
 
-        return new Address(street, number, neighborhood, zipCode, city, state, country, user);
+        return new Address(id, street, number, neighborhood, zipCode, city, state, country, user);
     }
 
     public String getStreet() {
@@ -79,11 +85,11 @@ public class Address {
         this.street = street;
     }
 
-    public String getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(String number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
@@ -126,9 +132,12 @@ public class Address {
     public void setCountry(String country) {
         this.country = country;
     }
-    public String getAddressInfo() {
-        return "Endereço: " +  street + " n° " + number + "\n Bairro: " + neighborhood
-                + "\n CEP: " + zipCode + "\n Cidade: " + city + "\n Estado: " + state +  "\n País: " + country;
+
+    public Integer getId() {
+        return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
